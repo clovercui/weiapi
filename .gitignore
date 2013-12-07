@@ -1,0 +1,5 @@
+*test*
+*.bak
+.idea
+.DS_Store
+plan.txt

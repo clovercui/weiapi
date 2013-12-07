@@ -1,23 +1,15 @@
 <?php
-//$msg = $_REQUEST['msg'];
-$msg = 'xiaohua@sss';
-$msg = urldecode($msg);
-
-preg_match('/([^\s@]+)[\s@](.+)/', $msg, $matches);
-
-$module = $matches[1];
-$module = hanzi2pinyin($module);
-
-$content = $matches[2];
-require_once("lib/{$module}.php");
-$className = ucfirst($module);
-$instance = new $className();
-echo $instance->reply($content);
-
-
-function hanzi2pinyin($hanzi){
-    return $hanzi;
-    $pinyin = '';
-
-    return $pinyin;
+header('Content-type:text/html;Charset=utf-8');
+require('common.php');
+$msg = '';
+if(isset($_REQUEST['msg'])) {
+    $msg = $_REQUEST['msg'];
+    $msg = urldecode($msg);
+} elseif(isset($argv[1])) {
+    $msg = $argv[1];
+} else {
+    $msg = '听歌 春天里 汪峰';
 }
+
+$dispatch = new Dispatcher($msg);
+$dispatch->run();
