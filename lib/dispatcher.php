@@ -27,7 +27,7 @@ class Dispatcher{
             return;
         }
 
-        preg_match('/([^\s\:#@]+)[\s\:#@]*(.+)/', $this->keyword, $matches);
+        preg_match('/([^\s\:#@]+)[\s\:#@]*(.+)?/', $this->keyword, $matches);
         $paramNum = count($matches);
         if($paramNum >=2 ){
             $this->module = pinyin($matches[1]);
@@ -54,7 +54,6 @@ class Dispatcher{
         };
 
         $this->analyze();
-
         $data = array();
         $className = 'Module_'.ucfirst($this->module);
         try{

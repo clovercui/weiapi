@@ -48,6 +48,7 @@ function pinyin($str, $charset = "utf-8", $ishead = 0){
 }
 
 function returnJson($data){
+    header('Content-type:text/html;Charset=utf-8');
     echo isset($_GET['callback']) ? $_GET['callback'] . '(' . json_encode($data) . ')' : json_encode($data);
     exit;
 }
@@ -59,4 +60,20 @@ function connectMysql($config){
     mysql_select_db($config['dbname'])
     or die('Could not select database'."\n");
     return $link;
+}
+
+function curl_get_content($url, $refer = ''){
+    $ch = curl_init();
+    $options = array(
+        CURLOPT_CONNECTTIMEOUT => 10,
+        CURLOPT_URL => $url,
+        CURLOPT_HEADER => 0,
+        CURLOPT_RETURNTRANSFER => 1,
+        CURLOPT_REFERER => $refer,
+        CURLOPT_USERAGENT => "Mozilla/5.0 (compatible; Baiduspider/2.0; +http://www.baidu.com/search/spider.html)"
+    );
+    curl_setopt_array($ch, $options);
+    $content = curl_exec($ch);
+    curl_close($ch);
+    return $content;
 }

@@ -4,16 +4,10 @@ abstract class Module_Base {
     protected $param;
     protected $link;
 
-    private $cacheModules = array(
-        'cangtoushi',
-        'fanyi',
-        'geci',
-        'xiaohua',
-        'tingge',
-        'guishudi'
-    );
+    private $cacheModules;
 
     public function __construct(){
+        $this->cacheModules = require_once(ROOT_PATH.'config/cache_modules.php');
         $className = get_class($this);
         $this->module = strtolower(array_pop(explode('_', $className)));
     }
@@ -69,7 +63,7 @@ abstract class Module_Base {
 
     protected function connectDb(){
         if(is_null($this->link)) {
-            $dbConfig = require(ROOT_PATH.'config/db.php');
+            global $dbConfig ;
             $this->link =  connectMysql($dbConfig);
         }
     }
