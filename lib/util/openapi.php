@@ -7,7 +7,6 @@ class Util_OpenApi{
 
     public static function ask($keyword){
         $response = curl_get_content(self::$url.urldecode($keyword), 'http://api.ajaxsns.com/');
-        //var_dump($keyword);exit;
         return self::analyze($response);
     }
 

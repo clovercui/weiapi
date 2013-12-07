@@ -10,18 +10,20 @@ class Dispatcher{
     private $keyword = '';
     private $module;
     private $param = '';
+    private $specialKeywords = array();
 
-    private $specialKeywords = array(
-        '帮助'=>'这是帮助文档',
-        '尼玛'=>'去死',
-    );
+    private static $moduleIns = array();
 
     public function __construct($keyword = ''){
         $this->keyword = $keyword;
-        $this->analyze();
+        $this->specialKeywords = include(ROOT_PATH.'config/special_keywords.php');
     }
 
     private function analyze(){
+        if($data = $this->analyzeSpecial()){
+            returnJson($data);
+        };
+
         if($this->keyword == '') {
             $this->module = 'default';
             return;
@@ -48,11 +50,6 @@ class Dispatcher{
     }
 
     public function run(){
-
-        if($data = $this->analyzeSpecial()){
-            returnJson($data);
-        };
-
         $this->analyze();
         $data = array();
         $className = 'Module_'.ucfirst($this->module);
@@ -71,5 +68,22 @@ class Dispatcher{
             );
         }
         return returnJson($data);
+    }
+
+    public function reply($keyword){
+        $this->keyword = $keyword;
+        $this->analyze();
+
+        $className = 'Module_'.ucfirst($this->module);
+
+        $instance = null;
+        if(array_key_exists($this->module, self::$moduleIns)){
+            $instance = self::$moduleIns[$this->module];
+        } else {
+            $instance = new $className();
+            self::$moduleIns[$this->module] = $instance;
+        }
+
+        return $instance->reply($this->param);
     }
 }

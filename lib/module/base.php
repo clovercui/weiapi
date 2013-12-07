@@ -7,7 +7,7 @@ abstract class Module_Base {
     private $cacheModules;
 
     public function __construct(){
-        $this->cacheModules = require_once(ROOT_PATH.'config/cache_modules.php');
+        $this->cacheModules = include(ROOT_PATH.'config/cache_modules.php');
         $className = get_class($this);
         $this->module = strtolower(array_pop(explode('_', $className)));
     }
