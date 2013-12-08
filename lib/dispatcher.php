@@ -51,7 +51,6 @@ class Dispatcher{
 
     public function run(){
         $this->analyze();
-        $data = array();
         $className = 'Module_'.ucfirst($this->module);
         try{
             $instance = new $className();
@@ -67,7 +66,7 @@ class Dispatcher{
                 'error'=>$error
             );
         }
-        return returnJson($data);
+        returnJson($data);
     }
 
     public function reply($keyword){
