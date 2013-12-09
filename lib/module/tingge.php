@@ -4,8 +4,14 @@ class Module_Tingge extends Module_Base{
 
         $tmp = explode(' ', $content);
         $song = $tmp[0];
-        $singer = $tmp[1];
-        $xml = file_get_contents('http://box.zhangmen.baidu.com/x?op=12&count=1&title='.urlencode($song).'$$'.urlencode($singer).'$$$$');
+        if(count($tmp)){
+            $paramStr = urlencode($song).'$$';
+        } else {
+            $singer = $tmp[1];
+            $paramStr = urlencode($song).'$$'.urlencode($singer).'$$$$';
+        }
+
+        $xml = file_get_contents('http://box.zhangmen.baidu.com/x?op=12&count=1&title='.$paramStr);
         $xml = new SimpleXMLElement($xml);
         $encodeUrl =  $xml->xpath('/result/url/encode');
         $decodeUrl = $xml->xpath('/result/url/decode');

@@ -1,4 +1,5 @@
 <?php
+header("Content-type:text/html;charset=utf-8");
 define('DEPLOY_MODE', false);
 //define('DEPLOY_MODE', true);
 define('LOCAL_DATA_MODE', false);
