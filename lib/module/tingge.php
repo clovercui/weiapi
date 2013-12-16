@@ -1,7 +1,17 @@
 <?php
 class Module_Tingge extends Module_Base{
     public function response($content = ''){
+        return $this->xiamiApi($content);
 
+    }
+
+    private function xiamiApi($content){
+        $song_info = file_get_contents('http://nnlife.duapp.com/xiami.php?key='.urlencode($content));
+        $song = json_decode($song_info, true);
+        return $song['song']['song_location'];
+    }
+
+    private function baiduApi($content){
         $tmp = explode(' ', $content);
         $song = $tmp[0];
         if(count($tmp)){

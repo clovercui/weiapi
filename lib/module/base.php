@@ -47,7 +47,7 @@ abstract class Module_Base {
     protected function writeCache($response){
         $this->connectDb();
         $data['module'] = $this->module;
-        $data['param'] = $this->param;
+        $data['param'] = implode('_',$this->param);
         $data['response'] = $response;
 
         $fields = implode(',', array_keys($data));

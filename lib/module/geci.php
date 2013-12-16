@@ -1,7 +1,7 @@
 <?php
 class Module_Geci extends Module_Base{
-    public function response($content = ''){
-        $tmp = explode(' ', $content);
+    public function response($content = array()){
+        $tmp = $content;
         $song = $tmp[0];
         if(count($tmp)){
             $paramStr = urlencode($song);
