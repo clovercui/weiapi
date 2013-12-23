@@ -1,4 +1,25 @@
 <?php
+function str_charset($in_charset, $out_charset, $str_or_arr){
+    $lang = array(&$in_charset, &$out_charset);
+    foreach ($lang as &$l){
+        switch (strtolower(substr($l, 0, 2))){
+            case 'gb': $l = 'gbk';
+                break;
+            case 'bi': $l = 'big5';
+                break;
+            case 'ut': $l = 'utf-8';
+                break;
+        }
+    }
+    if(is_array($str_or_arr)){
+        foreach($str_or_arr as &$v){
+            $v = str_charset($in_charset, $out_charset.'//IGNORE', $v);
+        }
+    } else {
+        $str_or_arr = iconv($in_charset, $out_charset.'//IGNORE', $str_or_arr);
+    }
+    return $str_or_arr;
+}
 
 function pinyin($str, $charset = "utf-8", $ishead = 0){
     $restr = '';
@@ -79,6 +100,10 @@ function curl_get_content($url, $refer = ''){
 }
 
 function writeFile($file, $data){
+    $dir = dirname($file);
+    if(!is_dir($dir)){
+        mkdir($dir, 0755, true);
+    }
     $result = @file_put_contents($file, $data);
     $result && chmod($file, 0755);
     return $result;
@@ -107,4 +132,107 @@ function url2fileName($url){
     $urlinfo =parse_url( $url);
     $urlinfo['path'] = str_replace(array('/','?'), array('_','_'), $urlinfo['path']);
     return implode('_', $urlinfo);
+}
+
+
+/*去除tag 以及内部的内容*/
+function stripTagsFull($text, $tags = array()){
+    $args = func_get_args();
+    $text = array_shift($args);
+    $tags = func_num_args() > 2 ? array_diff($args,array($text))  : (array)$tags;
+    foreach ($tags as $tag){
+        if(preg_match_all('/<'.$tag.'[^>]*>(.*)<\/'.$tag.'>/iUs', $text, $found)){
+            $text = str_replace($found[0],'',$text);
+        }
+    }
+    return $text;
+}
+
+
+function saveRemoteFile($sourceUrl, $rootPath = '', $localDomain = ''){
+    if($rootPath == '') {
+        $rootPath = FILE_PATH;
+    }
+
+    if($localDomain == '') {
+        $localDomain = FILE_DOMAIN;
+    }
+
+    $fileName = getFileNameFromUrl($sourceUrl);
+    //根据文件名生成子目录
+    $md5 = md5($fileName);
+    $path =  substr($md5,0,1) . '/'.substr($md5,1,1).'/';
+
+    $filePath = $rootPath.$path;
+    !is_dir($filePath) && mkdir($filePath, 0775, true);
+
+    //根据旧文件名生成新文件名
+    $t = array();
+    $t = explode('.', $fileName);
+    $newFileName = time() . '_' . rand(1000, 9999) . '.' . strtolower($t[count($t) - 1]);
+
+    //确定文件的绝对路径
+    $fileLocation = $rootPath.$path.$newFileName;
+    //确定文件的本地url
+    $localUrl = $localDomain.$path . $newFileName;
+    $result = copy($sourceUrl, $fileLocation);
+    if($result){
+        return $localUrl;
+    } else {
+        return false;
+    }
+}
+
+function saveContentPic($content){
+    $allowExts = 'png|jpg|gif|jpeg|bmp';
+    return preg_replace('/(http:\/\/[^>\'"]*?\.('.$allowExts.'))/ie', "saveRemoteFile('\\1')", $content);
+}
+
+function fetchUrl($url, $file, $charset = 'utf-8', $refer = '', $noCache = false){
+
+    if (file_exists($file) && !$noCache) {
+        $content = file_get_contents($file);
+    } else {
+        $content = curl_get_content($url, $refer);
+        if ($charset != 'utf-8') {
+            $content = str_charset($charset, 'utf-8', $content);
+        }
+        if(!$noCache){
+            writeFile($file, $content);
+        }
+    }
+    return $content;
+}
+
+
+function logInfo($msg, $type = 'INFO'){
+    $logFile = defined('TASK_NAME') ? ROOT_PATH. 'tasks/'. TASK_NAME. '/cache/'. TASK_NAME. '.log' : ROOT_PATH. 'cache/error.log';
+    $content = '';
+    if(file_exists($logFile)){
+        $content = file_get_contents($logFile);
+    }
+    $msg ='['.$type.']'. date("Y-m-d H:i:s"). ": ". $msg. "\r\n";
+    echo $msg;
+    $msg = $content. $msg;
+    writeFile($logFile, $msg);
+}
+
+/*
+ *类似于needle，取needle后面的字符串
+ * @params string $haystack
+ * @params string $needle
+ * @return string
+ */
+function strstrb($haystack, $needle){
+    return substr($haystack, strpos($haystack, $needle) + strlen($needle));
+}
+
+function getFileNameFromUrl($url){
+    $pathInfo = pathinfo($url);
+    return $pathInfo['basename'];
+}
+
+function getHostFromUrl($url){
+    $tmp = parse_url($url);
+    return $tmp['host'];
 }

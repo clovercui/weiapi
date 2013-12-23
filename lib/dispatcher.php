@@ -16,7 +16,7 @@ class Dispatcher{
 
     public function __construct($keyword = ''){
         $this->keyword = trim($keyword);
-        $this->specialKeywords = include(ROOT_PATH.'config/special_keywords.php');
+        $this->specialKeywords = include(ROOT_PATH . 'config/special_keywords.php');
     }
 
     private function analyze(){

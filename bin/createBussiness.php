@@ -1,24 +1,24 @@
 <?php
 require('../common.php');
 
-$busiName = trim($argv[1]); //业务名称
-if(empty($busiName) || !Util_Valid::isChinese($busiName)){
-    echo "bussiness name is invalid.\n";
+$configFile= trim($argv[1]); //配置名称
+if(empty($configFile)){
+    $configFile = 'busi.conf';
+}
+if(!file_exists($configFile)){
+    echo "config file doesnt exist. ";
     exit;
 }
-$busiAlias = pinyin($busiName);
-$categorys = $argv[2]; //栏目
-if(empty($categorys)){
-    echo "Categorys is invalid,please divide category name by \"|\" ";
-    exit;
-}
-$source = isset($argv[3]) ? $argv[3] : ''; //来源站
 
-$debugMode = empty($argv[4]) ? 0 : 1;
+$config = yaml_parse_file($configFile);
+$busiName = $config['busiName'];
+$busiAlias = pinyin($busiName);
+
+$debugMode = empty($argv[2]) ? 0 : 1;
 if($debugMode){
-    $dbConfig = require_once(ROOT_PATH.'config/online.db.php');
+    $dbConfig = require_once(ROOT_PATH . 'config/online.db.php');
 } else {
-    $dbConfig = require_once(ROOT_PATH.'config/local.db.php');
+    $dbConfig = require_once(ROOT_PATH . 'config/local.db.php');
 }
 $link = connectMysql($dbConfig);
 
@@ -28,9 +28,8 @@ $sql = "CREATE TABLE IF NOT EXISTS `datacloud`.`dc_{$busiAlias}` (
 	`title` varchar(100) COMMENT '标题',
 	`tags` varchar(30) COMMENT '标签，用逗号分割',
 	`content` text COMMENT '内容',
-	`content_source` text COMMENT '未经处理的内容',
 	`thumb` varchar(100) COMMENT '缩略图',
-	`thumb_source` varchar(100) COMMENT '缩略图源地址',
+	`source` varchar(100) COMMENT '内容源地址',
 	`from` varchar(10) COMMENT '来源',
 	`created` int(10) UNSIGNED,
 	PRIMARY KEY (`id`),
@@ -52,9 +51,8 @@ mysql_query($parentSql, $link)
     or die("$parentSql execute failed:".mysql_error($link));
 
 $lastId = mysql_insert_id($link);
-$categorys = explode('|', $categorys);
+$categorys = $config['categorys'];
 $tmp = array();
-$tmp2 = array();
 foreach($categorys as $c){
     if(empty($c)) {
         continue;
@@ -66,7 +64,6 @@ foreach($categorys as $c){
     mysql_query($sql, $link)
         or die("$sql execute failed:".mysql_error($link));
     $thisId = mysql_insert_id($link);
-    $tmp2[] = $c.'|'.$thisId.'|||';
 }
 
 mysql_close($link);

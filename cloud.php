@@ -1,16 +1,9 @@
 <?php
-define('DEPLOY_MODE', false);
+
 //define('DEPLOY_MODE', true);
-define('LOCAL_DATA_MODE', false);
-//define('LOCAL_DATA_MODE', false);
 
 require('common.php');
 
-if(DEPLOY_MODE){
-    $dbConfig = require_once(ROOT_PATH.'config/online.db.php');
-} else {
-    $dbConfig = require_once(ROOT_PATH.'config/local.db.php');
-}
 
 $catid = isset($_REQUEST['catid']) ? intval($_REQUEST['catid']) : 4;
 $page = isset($_REQUEST['page']) ? intval($_REQUEST['page']) : 1;

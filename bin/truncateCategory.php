@@ -8,7 +8,7 @@
  */
 
 require('../common.php');
-$dbConfig = require_once(ROOT_PATH.'config/local.db.php');
+$dbConfig = require_once(ROOT_PATH . 'config/local.db.php');
 $link = connectMysql($dbConfig);
 $sql = "TRUNCATE TABLE `dc_categorys`";
 mysql_query($sql, $link)

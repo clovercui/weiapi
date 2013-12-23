@@ -1,5 +1,5 @@
 <?php
-define('ROOT_PATH', __DIR__. '/');
+require(__DIR__.'/config/config.php');
 require_once(ROOT_PATH.'lib/common/function.php');
 
 define('LIB_PATH', ROOT_PATH.'lib/');
