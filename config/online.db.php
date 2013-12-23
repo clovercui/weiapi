@@ -6,5 +6,6 @@ return array(
     'username' => 'root',
     'password' =>'123456',
     'dbname' => 'weiapi',
+    'pconnect' => 0,
     'charset' => 'utf8'
 );

@@ -77,3 +77,34 @@ function curl_get_content($url, $refer = ''){
     curl_close($ch);
     return $content;
 }
+
+function writeFile($file, $data){
+    $result = @file_put_contents($file, $data);
+    $result && chmod($file, 0755);
+    return $result;
+}
+
+function writeCache($file, $array, $path = null){
+    if(!is_array($array)) return false;
+    $array = "<?php\nreturn ".var_export($array, true).";";
+    $cachefile = ($path ? $path : CACHE_PATH).$file;
+    $strlen = writeFile($cachefile, $array);
+    return $strlen;
+}
+
+function readCache($file, $path = null){
+    if(!$path) $path = CACHE_PATH;
+    $cachefile = $path.$file;
+    return @include $cachefile;
+}
+
+function config($configName, $key = null, $default = null) {
+    $config = require_once(ROOT_PATH.'/config/'.$configName.'.php');
+    return is_null($key) ? $config : (isset($config[$key]) ? $config[$key] : $default);
+}
+
+function url2fileName($url){
+    $urlinfo =parse_url( $url);
+    $urlinfo['path'] = str_replace(array('/','?'), array('_','_'), $urlinfo['path']);
+    return implode('_', $urlinfo);
+}

@@ -3,6 +3,7 @@ define('ROOT_PATH', __DIR__. '/');
 require_once(ROOT_PATH.'lib/common/function.php');
 
 define('LIB_PATH', ROOT_PATH.'lib/');
+define('CACHE_PATH', ROOT_PATH. 'cache/');
 set_include_path(get_include_path().
 PATH_SEPARATOR.LIB_PATH);
 
