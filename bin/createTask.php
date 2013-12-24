@@ -38,7 +38,6 @@ if(is_dir(ROOT_PATH.'tasks/'.$taskName)){
     exit;
 }
 @mkdir(ROOT_PATH.'tasks/'.$taskName, 0775);
-@mkdir(ROOT_PATH.'tasks/'.$taskName.'/cache', 0775);
 @mkdir(ROOT_PATH.'tasks/'.$taskName.'/static', 0755);
 @mkdir(ROOT_PATH.'tasks/'.$taskName.'/lib', 0755);
 

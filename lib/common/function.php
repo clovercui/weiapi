@@ -206,7 +206,7 @@ function fetchUrl($url, $file, $charset = 'utf-8', $refer = '', $noCache = false
 
 
 function logInfo($msg, $type = 'INFO'){
-    $logFile = defined('TASK_NAME') ? ROOT_PATH. 'tasks/'. TASK_NAME. '/cache/'. TASK_NAME. '.log' : ROOT_PATH. 'cache/error.log';
+    $logFile = defined('TASK_NAME') ? CACHE_PATH. 'tasklog/'. TASK_NAME. '.log' : ROOT_PATH. 'cache/error.log';
     $content = '';
     if(file_exists($logFile)){
         $content = file_get_contents($logFile);

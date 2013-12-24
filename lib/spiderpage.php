@@ -22,15 +22,16 @@ abstract class SpiderPage{
     }
 
     public function readList(){
-        $processFile = TASK_NAME.'.ios.process';
-        $processData = readCache($processFile);
+        $processFile = 'ios.process';
+        $processFilePath = CACHE_PATH.'taskdata/'.TASK_NAME.'/';
+        $processData = readCache($processFile, $processFilePath);
         if(empty($processData)){
             $processData = array(
                 'current'=>0,
                 'url'=>'',
                 'filename'=>''
             );
-            writeCache($processFile, $processData);
+            writeCache($processFile, $processData, $processFilePath);
         }
         $current = $processData['current'];
 
@@ -53,9 +54,9 @@ abstract class SpiderPage{
             $processData['url'] = $nowUrl;
             $processData['filename'] = $fileName;
 
-            writeCache($processFile, $processData);
+            writeCache($processFile, $processData, $processFilePath);
 
-            $content = fetchUrl($nowUrl, ROOT_PATH.'cache/html'.TASK_NAME.'/'.$fileName,
+            $content = fetchUrl($nowUrl, ROOT_PATH.'cache/html/'.TASK_NAME.'/'.$fileName,
                 $this->taskConfig['charset'], $this->taskConfig['domain'],
                 $this->taskConfig['cachePage']);
 
